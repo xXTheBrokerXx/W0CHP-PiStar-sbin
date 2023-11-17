@@ -22,7 +22,7 @@ gitBranch=$(git --work-tree=/var/www/dashboard --git-dir=/var/www/dashboard/.git
 dashVer=$( git --work-tree=/var/www/dashboard --git-dir=/var/www/dashboard/.git rev-parse --short=10 ${gitBranch} )
 psVer=$( grep Version /etc/pistar-release | awk '{print $3}' )
 # hostFileURL=https://hostfiles.w0chp.net
-hostFileURL=https://raw.githubusercontent.com/FreeDMR-Digital-Network/WPSD-HostFiles/main
+hostFileURL=https://raw.githubusercontent.com/xXTheBrokerXx/WPSD-HostFiles/main
 uuidStr=$(egrep 'UUID|ModemType|ModemMode|ControllerType' /etc/pistar-release | awk {'print $3'} | tac | xargs| sed 's/ /_/g')
 modelName=$(grep -m 1 'model name' /proc/cpuinfo | sed 's/.*: //')
 hardwareField=$(grep 'Model' /proc/cpuinfo | sed 's/.*: //')
@@ -152,8 +152,9 @@ else
 fi
 
 # Grab DMR IDs
-curl --fail -L -o /tmp/DMRIds.tmp.bz2 -s ${hostFileURL}/DMRIds.dat.bz2 --user-agent "${uaStr}"
-bunzip2 -f /tmp/DMRIds.tmp.bz2
+#curl --fail -L -o /tmp/DMRIds.tmp.bz2 -s ${hostFileURL}/DMRIds.dat.bz2 --user-agent "${uaStr}"
+#bunzip2 -f /tmp/DMRIds.tmp.bz2
+curl --fail -o ${DMRIDFILE} -s https://raw.githubusercontent.com/FreeDMR-Digital-Network/MW0MWZ-HostFiles/main/DMRIds.dat
 # filter out IDs less than 7 digits (causing collisions with TGs of < 7 digits in "Target" column"
 cat /tmp/DMRIds.tmp  2>/dev/null | grep -v '^#' | awk '($1 > 999999) && ($1 < 10000000) { print $0 }' | sort -un -k1n -o ${DMRIDFILE}
 rm -f /tmp/DMRIds.tmp
